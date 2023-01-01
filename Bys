@@ -1,0 +1,17 @@
+clc;clear;
+
+p_train=-pi:0.1:pi;
+sinCurve=sin(p_train);
+
+net=newff(minmax(p_train),[15,1],{'tansig','purelin'},'traingd'); 
+net.trainParam.show=50; 
+net.trainParam.lr=0.01; %
+net.trainParam.epochs=1000; 
+net.trainParam.goal=1.0e-5;
+
+[net,tr]=train(net,p_train,t_train);
+
+t_sim=sim(net,p_train);
+
+plot(p_train,t_train,'b*',p_train,t_sim,'r-',p_train,sinCurve,'k:');
+legend('实际值','拟合值','sin曲线');
