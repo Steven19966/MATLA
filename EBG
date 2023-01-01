@@ -1,0 +1,34 @@
+load spectra_data.mat%用load函数
+ 
+% 2. 随机产生训练集和测试集
+temp = randperm(size(NIR,1));
+
+P_train = NIR(temp(1:50),:)';
+T_train = octane(temp(1:50),:)';
+
+P_test = NIR(temp(51:end),:)';
+T_test = octane(temp(51:end),:)';
+N = size(P_test,2);
+ 
+
+[p_train, ps_input] = mapminmax(P_train,0,1);
+p_test = mapminmax('apply',P_test,ps_input);
+ 
+[t_train, ps_output] = mapminmax(T_train,0,1);
+ 
+
+net = newff(p_train,t_train,9);
+ 
+
+net.trainParam.epochs = 1000;
+net.trainParam.goal = 1e-3;
+net.trainParam.lr = 0.01;
+ 
+
+net = train(net,p_train,t_train);
+ 
+
+t_sim = sim(net,p_test);
+ 
+
+T_sim = mapminmax('reverse',t_sim,ps_output);%ps_output
